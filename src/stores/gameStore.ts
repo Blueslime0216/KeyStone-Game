@@ -42,6 +42,9 @@ import { createNotation } from '../utils/notationUtils';
  * 모든 게임 관련 상태와 액션을 하나의 인터페이스로 정의
  */
 interface GameStore extends GameState {
+  // === 추가 상태 ===
+  coreStonePosition: Position | null; // 코어를 만든 돌의 위치 (공명 활성화 시 필요)
+  
   // === 게임 핵심 액션들 ===
   placeStone: (position: Position) => void;           // 돌 배치 (전도석 배치)
   convertLShape: (lShape: LShape, stoneIndex: number) => void; // ㄱ자 변환 (전도석 → 요석)
@@ -92,6 +95,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   selectedCores: [],                // 선택 가능한 코어들 (공명 모드에서 표시)
   selectedCore: null,               // 현재 선택된 코어 (초점 선택 모드에서 사용)
   corePlayer: null,                 // 코어를 만든 플레이어 (공명 활성화 시 필요)
+  coreStonePosition: null,          // 코어를 만든 돌의 위치 (공명 활성화 시 필요)
   hoveredPosition: null,            // 마우스 호버 위치 (UI 피드백용)
   
   // === 기보 시스템 ===
@@ -180,6 +184,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         selectedCores: cores,    // 선택 가능한 코어들 표시
         selectedCore: null,      // 아직 코어를 선택하지 않음
         corePlayer: currentPlayer,  // 코어를 만든 플레이어 저장 (공명 활성화 시 필요)
+        coreStonePosition: position, // 코어를 만든 돌의 위치 저장
         moveHistory: [...get().moveHistory, move], // 히스토리에 추가
         currentMoveIndex: get().currentMoveIndex + 1 // 턴 번호 증가
       });
@@ -321,6 +326,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       });
     }
     
+    // 코어를 만든 돌의 위치는 코어가 완성될 때 저장된 위치 사용
+    const coreStonePosition = get().coreStonePosition || position;
+    
     // 기보 기록 생성 (되돌리기 시스템에서 사용)
     const move: GameMove = {
       moveNumber: get().currentMoveIndex + 1,
@@ -332,6 +340,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       resonanceInfo: { 
         core: selectedCore, 
         focusPosition: position, 
+        coreStonePosition: coreStonePosition, // 코어를 만든 돌의 위치
         resonancePaths 
       } // 공명 정보
     };
@@ -356,6 +365,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // 공명 활성화 및 파동 전파 (gameLogic.ts 함수 호출)
     const { newBoard, resonancePaths } = activateResonance(board, core, focusPosition);
     
+    // 코어를 만든 돌의 위치 찾기 (코어 내부에서 초점 요석이 아닌 위치)
+    const coreStonePosition = core.positions.find(pos => 
+      pos.row !== focusPosition.row || pos.col !== focusPosition.col
+    ) || focusPosition; // 찾지 못하면 초점 요석 위치 사용
+    
     // 기보 기록 생성
     const move: GameMove = {
       moveNumber: get().currentMoveIndex + 1,
@@ -364,7 +378,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
       position: focusPosition,
       previousBoard: board,
       currentBoard: newBoard,
-      resonanceInfo: { core, focusPosition, resonancePaths }
+      resonanceInfo: { 
+        core, 
+        focusPosition, 
+        coreStonePosition: coreStonePosition, // 코어를 만든 돌의 위치
+        resonancePaths 
+      }
     };
     
     // 턴 완료
@@ -458,7 +477,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         selectedLShape: null, // 선택 상태 초기화
         selectedCores: [],
         selectedCore: null,
-        corePlayer: null
+        corePlayer: null,
+        coreStonePosition: null
       });
     }
   },
@@ -495,6 +515,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         selectedCores: [],
         selectedCore: null,
         corePlayer: null,
+        coreStonePosition: null,
         gameStatus: 'playing' // 게임 진행 중 상태로 복원
       });
       
@@ -532,6 +553,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       selectedCores: [],
       selectedCore: null,
       corePlayer: null,
+      coreStonePosition: null,
       hoveredPosition: null,
       
       // === 기보 시스템 초기화 ===
@@ -679,6 +701,7 @@ function completeTurn(move: GameMove) {
     selectedCores: [],
     selectedCore: null,
     corePlayer: null,
+    coreStonePosition: null, // 코어를 만든 돌의 위치 초기화
     moveHistory: [...useGameStore.getState().moveHistory, move], // 히스토리에 추가
     currentMoveIndex: useGameStore.getState().currentMoveIndex + 1, // 턴 번호 증가
     gameStatus: hasWon ? `${currentPlayer}Win` as GameStatus : 'playing' // 승리 여부에 따라 상태 설정

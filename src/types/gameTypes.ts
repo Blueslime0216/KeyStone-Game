@@ -149,6 +149,7 @@ export interface GameMove {
   resonanceInfo?: {            // 공명 정보 (공명 타입일 때만)
     core: Core;                // 완성된 코어
     focusPosition: Position;   // 초점 요석 위치
+    coreStonePosition: Position; // 코어를 만든 돌의 위치
     resonancePaths: Position[][]; // 공명 파동 경로들 (4방향)
   };
   lShapeInfo?: {               // ㄱ자 변환 정보 (변환 타입일 때만)

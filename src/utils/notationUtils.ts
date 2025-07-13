@@ -3,13 +3,76 @@
  * 게임의 각 수에 대한 기보 표기법을 생성하고 관리
  */
 
-import { 
-  GameMove, 
-  Position, 
-  NotationInfo, 
-  NotationType, 
-  Direction 
-} from '../types/gameTypes';
+import { Position, GameMove, GameStatus, NotationInfo, Direction } from '../types/gameTypes';
+import { detectCoresWithNewStone } from './gameLogic';
+
+/**
+ * 위치를 기보 표기로 변환하는 함수
+ * @param position - 보드 위치 (row: 0-16, col: 0-16)
+ * @returns 기보 표기 (예: "i9", "a1", "q17")
+ */
+export function positionToNotation(position: Position): string {
+  const col = String.fromCharCode(97 + position.col); // a-q
+  const row = position.row + 1; // 1-17 (상단이 1, 하단이 17)
+  return `${col}${row}`;
+}
+
+/**
+ * 게임 히스토리를 기보 텍스트로 변환하는 함수
+ * @param moveHistory - 게임 히스토리 배열
+ * @param gameStatus - 게임 상태
+ * @returns 기보 텍스트 문자열
+ */
+export function generateNotationText(moveHistory: GameMove[], gameStatus: GameStatus): string {
+  if (moveHistory.length === 0) return '';
+
+  const notationParts: string[] = [];
+  
+  for (let i = 0; i < moveHistory.length; i++) {
+    const move = moveHistory[i];
+    
+    if (move.moveType === 'place') {
+      // 일반 돌 배치 - 코어가 만들어지지 않은 경우에만 추가
+      // 코어가 만들어진 경우는 resonance 타입에서 처리
+      const cores = detectCoresWithNewStone(move.currentBoard, move.player, move.position);
+      if (cores.length === 0) {
+        notationParts.push(positionToNotation(move.position));
+      }
+    } else if (move.moveType === 'resonance' && move.resonanceInfo) {
+      // 코어 완성 후 초점 요석 선택
+      // 코어를 만든 돌의 위치와 초점 요석 위치를 연결
+      const coreStonePosition = move.resonanceInfo.coreStonePosition;
+      const focusPosition = move.resonanceInfo.focusPosition;
+      
+      const corePosition = positionToNotation(coreStonePosition);
+      const focusNotation = positionToNotation(focusPosition);
+      notationParts.push(`${corePosition}-${focusNotation}`);
+    }
+  }
+  
+  // 게임 종료 표시
+  if (gameStatus === 'blackWin') {
+    notationParts.push('(BlackWin)');
+  } else if (gameStatus === 'whiteWin') {
+    notationParts.push('(WhiteWin)');
+  }
+  
+  return notationParts.join(' ');
+}
+
+/**
+ * 기보 텍스트를 클립보드에 복사하는 함수
+ * @param text - 복사할 기보 텍스트
+ */
+export async function copyNotationToClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    console.error('클립보드 복사 실패:', error);
+    return false;
+  }
+}
 
 /**
  * 기보 정보를 생성하는 함수
