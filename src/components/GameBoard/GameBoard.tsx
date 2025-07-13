@@ -10,7 +10,7 @@
  * 
  * 레이아웃:
  * - 정사각형 비율 유지 (aspect-square)
- * - 최대 크기 제한 (max-w-4xl)
+ * - 화면 크기에 따른 적응형 크기 조정
  * - 중앙 정렬
  */
 
@@ -31,18 +31,18 @@ import { BOARD_SIZE } from '../../utils/gameLogic';
  * 
  * 레이아웃:
  * - 정사각형 비율 유지 (aspect-square)
- * - 최대 크기 제한 (max-w-4xl)
+ * - 화면 크기에 따른 적응형 크기 조정
  * - 중앙 정렬
  */
 const GameBoard: React.FC = () => {
   const { board, gameStatus } = useGameStore();
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center p-2">
       {/* 게임 보드 컨테이너 */}
-      <div className="relative w-full aspect-square max-w-4xl bg-gray-800 rounded-lg shadow-2xl border-4 border-gray-700">
+      <div className="game-board-container relative bg-gray-800 rounded-lg shadow-2xl border-4 border-gray-700">
         {/* 보드 그리드 */}
-        <div className="absolute inset-4 grid grid-cols-17 grid-rows-17 gap-0.5 bg-gray-600 rounded">
+        <div className="absolute inset-4 grid grid-cols-17 grid-rows-17 bg-gray-600 rounded">
           {/* 각 셀 렌더링 */}
           {board.map((row, rowIndex) => 
             row.map((cell, colIndex) => (

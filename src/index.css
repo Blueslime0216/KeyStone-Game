@@ -22,6 +22,42 @@ code {
   box-sizing: border-box;
 }
 
+/* 게임 보드 반응형 스타일 */
+.game-board-container {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: auto;
+  max-width: min(90vh, 90vw);
+  max-height: min(90vh, 90vw);
+}
+
+/* 모바일에서 돌 크기 최적화 */
+@media (max-width: 768px) {
+  .game-board-container {
+    max-width: min(85vh, 85vw);
+    max-height: min(85vh, 85vw);
+  }
+}
+
+/* 반응형 그리드 gap 조정 */
+@media (max-width: 640px) {
+  .game-board-container .grid {
+    gap: 0.5px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .game-board-container .grid {
+    gap: 1px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .game-board-container .grid {
+    gap: 2px;
+  }
+}
+
 /* 스크롤바 스타일링 */
 ::-webkit-scrollbar {
   width: 8px;

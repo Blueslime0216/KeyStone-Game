@@ -115,8 +115,10 @@ const App: React.FC = () => {
 
         {/* 중앙 게임보드 */}
         <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-          <div className="max-w-4xl max-h-4xl w-full h-full flex items-center justify-center">
-            <GameBoard />
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
+              <GameBoard />
+            </div>
           </div>
         </div>
 
@@ -138,8 +140,10 @@ const App: React.FC = () => {
     <div className="h-screen bg-gray-900 text-white flex flex-col overflow-hidden">
       {/* 메인 게임 영역 */}
       <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="w-full max-w-md aspect-square">
-          <GameBoard />
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center">
+            <GameBoard />
+          </div>
         </div>
 
         {/* 모바일 패널 오버레이 */}

@@ -162,7 +162,7 @@ const Stone: React.FC<StoneProps> = ({
     // 돌의 기본 스타일과 상태별 추가 스타일을 조합
     <div
       className={`
-        relative w-full h-full rounded-full flex items-center justify-center
+        relative w-5/6 h-5/6 rounded-full flex items-center justify-center
         ${getBaseStyle()} // 기본 스타일 (색상, 테두리)
         ${getStateStyle()} // 상태별 추가 스타일 (링, 애니메이션)
       `}

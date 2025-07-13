@@ -163,7 +163,7 @@ const BoardCellComponent: React.FC<BoardCellProps> = ({ cell, position }) => {
     // 셀의 기본 스타일과 상태에 따른 조건부 스타일링
     <div
       className={`
-        relative w-8 h-8 bg-cell-dark border border-gray-600
+        relative w-full h-full bg-cell-dark border border-gray-600
         ${gamePhase === 'placing' && isAvailable ? 'hover:bg-cell-hover cursor-pointer' : ''}  // 돌 배치 단계에서만 호버 효과 + 커서
         ${isHovered ? 'bg-cell-hover' : ''}                         // 호버 중인 셀: 배경색 변경
         ${isInCore ? 'ring-2 ring-yellow-400' : ''}                 // 코어 내부: 노란색 링
@@ -181,7 +181,7 @@ const BoardCellComponent: React.FC<BoardCellProps> = ({ cell, position }) => {
       */}
       {cell.stoneType === 'empty' && isHovered && isAvailable && (
         <div
-          className="absolute inset-1 rounded-full bg-gray-400 opacity-30"
+          className="absolute inset-2 rounded-full bg-gray-400 opacity-30"
         />
       )}
       
@@ -197,15 +197,17 @@ const BoardCellComponent: React.FC<BoardCellProps> = ({ cell, position }) => {
         - notation: 기보 정보 (기보 모드가 활성화된 경우에만)
       */}
       {cell.stoneType !== 'empty' && (
-        <Stone
-          type={cell.stoneType}
-          position={position}
-          isHighlighted={cell.isHighlighted}
-          isConvertible={isConvertible}
-          isResonating={cell.isResonating}
-          isFocusCandidate={isFocusCandidate}
-          notation={isNotationMode ? cell.notation : undefined}
-        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Stone
+            type={cell.stoneType}
+            position={position}
+            isHighlighted={cell.isHighlighted}
+            isConvertible={isConvertible}
+            isResonating={cell.isResonating}
+            isFocusCandidate={isFocusCandidate}
+            notation={isNotationMode ? cell.notation : undefined}
+          />
+        </div>
       )}
       
 

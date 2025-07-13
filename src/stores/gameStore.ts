@@ -396,7 +396,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   
   /**
    * 되돌리기 액션 (Ctrl+Z)
-   * 이전 상태로 되돌리거나 히스토리 모드로 전환
+   * 게임 상태를 이전 턴으로 되돌림
    * 
    * 동작 방식:
    * 1. 이미 히스토리 모드인 경우: 이전 턴으로 이동
@@ -481,7 +481,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const targetMove = moveHistory[historyIndex]; // 현재 보고 있는 턴
       const newHistory = moveHistory.slice(0, historyIndex + 1); // 현재 턴까지의 히스토리만 유지
       
-      // 현재 턴의 플레이어가 다음 턴을 진행할 플레이어
+      // 현재 턴의 다음 플레이어가 다음 턴을 진행할 플레이어
       const nextPlayer = targetMove.player === 'black' ? 'white' : 'black';
       
       set({

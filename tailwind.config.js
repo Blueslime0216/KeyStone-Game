@@ -22,6 +22,19 @@ module.exports = {
       },
       gridTemplateRows: {
         '17': 'repeat(17, minmax(0, 1fr))',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '96rem',
+      },
+      maxHeight: {
+        '8xl': '88rem',
+        '9xl': '96rem',
       }
     },
   },
